@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/book-service")
 @RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
@@ -22,22 +22,23 @@ public class BookController {
         return bookService.updateBookEntity(bookId, requestModel);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Object> delete(@PathVariable("id") Long bookId) {
+        return bookService.delete(bookId);
+    }
 
-    @GetMapping("/all")
+
+    @GetMapping("/book/all")
     public ResponseEntity<Object> showAll() {
         return bookService.showAll();
     }
 
     //single book find
-    @GetMapping("/{id}")
+    @GetMapping("/book/{id}")
     public ResponseEntity<Object> findByBookId(@PathVariable("id") Long bookId) {
         return bookService.findByBookId(bookId);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Object> delete(@PathVariable("id") Long bookId) {
-        return bookService.delete(bookId);
-    }
 
 
 
