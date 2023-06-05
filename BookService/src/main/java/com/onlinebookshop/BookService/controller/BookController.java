@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/book")
 @RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
@@ -17,25 +17,25 @@ public class BookController {
         return bookService.create(requestModel);
     }
 
-    @PutMapping("/update/{bookId}")
-    public ResponseEntity<Object> updateBookEntity(@PathVariable Long bookId, @RequestBody BookRequestModel requestModel) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Object> updateBookEntity(@PathVariable("id") Long bookId, @RequestBody BookRequestModel requestModel) {
         return bookService.updateBookEntity(bookId, requestModel);
     }
 
 
-    @GetMapping("/showAll")
+    @GetMapping("/all")
     public ResponseEntity<Object> showAll() {
         return bookService.showAll();
     }
 
     //single book find
-    @GetMapping("/{bookId}")
-    public ResponseEntity<Object> findByBookId(@PathVariable Long bookId) {
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> findByBookId(@PathVariable("id") Long bookId) {
         return bookService.findByBookId(bookId);
     }
 
-    @DeleteMapping("/delete/{bookId}")
-    public ResponseEntity<Object> delete(@PathVariable Long bookId) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Object> delete(@PathVariable("id") Long bookId) {
         return bookService.delete(bookId);
     }
 
