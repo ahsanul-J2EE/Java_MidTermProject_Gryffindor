@@ -1,10 +1,15 @@
 package com.onlinebookshop.BookService.controller;
 
-import com.onlinebookshop.BookService.model.BookRequestModel;
+import com.onlinebookshop.BookService.model.ApiResponse;
+import com.onlinebookshop.BookService.model.BookDto;
 import com.onlinebookshop.BookService.service.BookService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpStatusCodeException;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/book-service")
@@ -13,31 +18,42 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping("/create")
-    public ResponseEntity<Object> create(@RequestBody BookRequestModel requestModel) {
-        return bookService.create(requestModel);
+    public ResponseEntity<Object> create(@RequestBody BookDto bookDto) {
+
+        BookDto newBookDto = bookService.create(bookDto);
+        return new ResponseEntity<>(newBookDto, HttpStatus.CREATED);
     }
 
+
     @PutMapping("/update/{id}")
-    public ResponseEntity<Object> updateBookEntity(@PathVariable("id") Long bookId, @RequestBody BookRequestModel requestModel) {
-        return bookService.updateBookEntity(bookId, requestModel);
+    public ResponseEntity<BookDto> updateBookEntity(@PathVariable("id") Long bookId, @RequestBody BookDto bookDto) {
+
+        BookDto updatedBook =  bookService.updateBookEntity(bookId,bookDto);
+        return ResponseEntity.ok(updatedBook);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Object> delete(@PathVariable("id") Long bookId) {
-        return bookService.delete(bookId);
+    public ResponseEntity<ApiResponse> delete(@PathVariable("id") Long bookId) {
+//        return bookService.delete(bookId);
+
+        this.bookService.delete(bookId);
+
+        return new ResponseEntity(new ApiResponse("User Deleted Successfully",true),HttpStatus.OK);
+
     }
 
+    @GetMapping("/book/{id}")
+    public ResponseEntity<Object> getBookById(@PathVariable("id") Long bookId) {
+        return ResponseEntity.ok( bookService.getBookById(bookId));
+    }
 
     @GetMapping("/book/all")
-    public ResponseEntity<Object> showAll() {
-        return bookService.showAll();
+    public ResponseEntity<List<BookDto>> getBookById() {
+        return ResponseEntity.ok( bookService.getAllBooks());
     }
 
-    //single book find
-    @GetMapping("/book/{id}")
-    public ResponseEntity<Object> findByBookId(@PathVariable("id") Long bookId) {
-        return bookService.findByBookId(bookId);
-    }
+
+
 
 
 
