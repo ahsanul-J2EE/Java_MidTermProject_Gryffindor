@@ -1,7 +1,7 @@
 package com.onlinebookshop.Inventory.Service.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "BookInventory")
