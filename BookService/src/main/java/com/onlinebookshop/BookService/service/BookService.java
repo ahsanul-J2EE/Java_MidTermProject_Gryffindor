@@ -1,19 +1,20 @@
 package com.onlinebookshop.BookService.service;
 
-import com.onlinebookshop.BookService.model.BookRequestModel;
+import com.onlinebookshop.BookService.model.BookDto;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public interface BookService {
 
-    public ResponseEntity<Object> create(BookRequestModel bookRequestModel);
+    BookDto create(BookDto bookDto);
+    List<BookDto> getAllBooks();
+    void delete(Long bookId);
+    BookDto updateBookEntity(Long bookId, BookDto requestModel);
 
-    public ResponseEntity<Object> showAll();
+    BookDto getBookById(Long bookId);
 
-    ResponseEntity<Object> delete(Long bookId);
 
-    ResponseEntity<Object> updateBookEntity(Long bookId, BookRequestModel requestModel);
-
-    ResponseEntity<Object> findByBookId(Long bookId);
 
 
 }

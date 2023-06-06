@@ -1,18 +1,19 @@
 package com.onlinebookshop.BookService.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookResponseModel {
+public class ApiResponse<T> {
 
-
-    private String bookName;
-    private String authorName;
-    private String genre;
+    private String message;
+    private boolean  success;
 
 
 }
