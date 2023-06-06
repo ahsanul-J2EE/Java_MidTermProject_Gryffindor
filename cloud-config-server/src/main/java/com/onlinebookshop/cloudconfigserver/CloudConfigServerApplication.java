@@ -10,6 +10,7 @@ public class CloudConfigServerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CloudConfigServerApplication.class, args);
+		System.out.println("-----------Cloud Config Server Running-----------");
 	}
 
 }
