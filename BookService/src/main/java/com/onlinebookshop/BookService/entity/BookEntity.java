@@ -16,7 +16,6 @@ import javax.persistence.*;
 public class BookEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long bookId;
 
 

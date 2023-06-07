@@ -3,15 +3,22 @@ package com.onlinebookshop.BookService.service.impl;
 import com.onlinebookshop.BookService.entity.BookEntity;
 import com.onlinebookshop.BookService.exceptions.ResourceNotFoundException;
 import com.onlinebookshop.BookService.model.BookDto;
+import com.onlinebookshop.BookService.model.Inventory;
 import com.onlinebookshop.BookService.repository.BookRepository;
 import com.onlinebookshop.BookService.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,18 +32,34 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Autowired
+    private RestTemplate restTemplate;
+
+    private Inventory inventory = new Inventory();
+
+    private Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
+
+
     @Override
-    public BookDto create(BookDto bookDto) {
-//        BookEntity bookEntity = BookEntity.builder()
-//                .bookName(bookDto.getBookName())
-//                .authorName(bookDto.getAuthorName())
-//                .genre(bookDto.getGenre())
-//                .build();
-//        BookEntity savedBookEntity = bookRepository.save(bookEntity);
+    public ResponseEntity<Object> create(BookDto bookDto) {
 
         BookEntity bookEntity = this.dtoToBookEntity(bookDto);
+        inventory.setBookId(bookDto.getBookId());
+        inventory.setPrice(bookDto.getPrice());
+        inventory.setQuantity(bookDto.getQuantity());
         BookEntity savedBookEntity = bookRepository.save(bookEntity);
-        return this.bookEntityToDto(savedBookEntity);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+
+        ResponseEntity<Inventory> responseEntity = restTemplate.postForEntity("http://INVENTORYSERVICE/book-inventory/create",inventory,Inventory.class);
+        if (responseEntity.getStatusCode()==HttpStatus.OK){
+            return new ResponseEntity<>(savedBookEntity, HttpStatus.CREATED);
+        }
+        else{
+            return new ResponseEntity<>(savedBookEntity, HttpStatus.BAD_REQUEST);
+        }
+
 
     }
 
@@ -81,7 +104,20 @@ public class BookServiceImpl implements BookService {
         BookEntity bookEntity = this.bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "Id", bookId));
 
-        return this.bookEntityToDto(bookEntity);
+
+
+        Inventory inventory = restTemplate.getForObject("http://INVENTORYSERVICE/book-inventory/"+bookId, Inventory.class);
+//        List<Inventory> ratings = Arrays.stream(inventory).toList();
+
+        logger.info("response status code: {} ",inventory);
+
+
+        BookDto bookDto = this.bookEntityToDto(bookEntity);
+        bookDto.setPrice(inventory.getPrice());
+        bookDto.setQuantity(inventory.getQuantity());
+
+
+        return bookDto;
     }
 
 

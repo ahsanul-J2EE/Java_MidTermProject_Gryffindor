@@ -3,6 +3,8 @@ package com.onlinebookshop.BookService.model;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -12,16 +14,19 @@ import javax.validation.constraints.NotEmpty;
 @Setter
 public class BookDto {
 
-    @NotEmpty
+
+    private Integer bookId;
+
     private String bookName;
-    @NotEmpty
+
     private String authorName;
-    @NotEmpty
+
     private String genre;
-    @NotEmpty
+
     private double price;
-    @NotEmpty
-    private Integer quantity;
+
+    private Long quantity;
+
 
 
 }
