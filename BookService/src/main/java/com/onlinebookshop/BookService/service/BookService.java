@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BookService {
 
-    ResponseEntity<Object> create(BookDto bookDto);
+    BookDto create(BookDto bookDto);
     List<BookDto> getAllBooks();
     void delete(Long bookId);
     BookDto updateBookEntity(Long bookId, BookDto requestModel);

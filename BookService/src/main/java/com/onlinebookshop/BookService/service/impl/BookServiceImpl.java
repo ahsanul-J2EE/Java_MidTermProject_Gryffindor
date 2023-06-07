@@ -37,28 +37,28 @@ public class BookServiceImpl implements BookService {
 
     private Inventory inventory = new Inventory();
 
+    HttpHeaders headers = new HttpHeaders();
+
     private Logger logger = LoggerFactory.getLogger(BookServiceImpl.class);
 
 
     @Override
-    public ResponseEntity<Object> create(BookDto bookDto) {
+    public BookDto create(BookDto bookDto) {
 
         BookEntity bookEntity = this.dtoToBookEntity(bookDto);
+
+        BookEntity savedBookEntity = bookRepository.save(bookEntity);
+
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
         inventory.setBookId(bookDto.getBookId());
         inventory.setPrice(bookDto.getPrice());
         inventory.setQuantity(bookDto.getQuantity());
-        BookEntity savedBookEntity = bookRepository.save(bookEntity);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
 
         ResponseEntity<Inventory> responseEntity = restTemplate.postForEntity("http://INVENTORY-SERVICE/book-inventory/create",inventory,Inventory.class);
-        if (responseEntity.getStatusCode()==HttpStatus.OK){
-            return new ResponseEntity<>(savedBookEntity, HttpStatus.CREATED);
-        }
-        else{
-            return new ResponseEntity<>(savedBookEntity, HttpStatus.BAD_REQUEST);
-        }
+
+
+        return this.bookEntityToDto(savedBookEntity);
 
 
     }
@@ -68,9 +68,22 @@ public class BookServiceImpl implements BookService {
 
         List<BookEntity> bookEntities =  this.bookRepository.findAll();
         List<BookDto> bookDtos = bookEntities.stream().map(book -> this.bookEntityToDto(book)).collect(Collectors.toList());
+        for(BookDto bookDto : bookDtos) {
+            System.out.println(bookDto.getBookId());
+            Integer bookId = bookDto.getBookId();
+            Inventory inventory = restTemplate.getForObject("http://INVENTORY-SERVICE/book-inventory/45", Inventory.class);
+            System.out.println(inventory.getPrice());
+
+            bookDto.setPrice(inventory.getPrice());
+            bookDto.setQuantity(inventory.getQuantity());
+        }
+//            logger.info("response status code: {} ",inventory);
+//            System.out.println(inventory.getPrice());
+
         return bookDtos;
 
     }
+
 
 
     @Override
@@ -78,6 +91,8 @@ public class BookServiceImpl implements BookService {
 
         BookEntity bookEntity = bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "Id", bookId));
+
+//        Inventory inventory = restTemplate.getForObject("http://INVENTORY-SERVICE/book-inventory/delete/450", Inventory.class);
 
         bookRepository.delete(bookEntity);
 
@@ -93,9 +108,16 @@ public class BookServiceImpl implements BookService {
         bookEntity.setAuthorName(bookDto.getAuthorName());
         bookEntity.setGenre(bookDto.getGenre());
         BookEntity updatedBook = this.bookRepository.save(bookEntity);
-        BookDto updatedBook1 =  this.bookEntityToDto(updatedBook);
 
-        return updatedBook1;
+
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        inventory.setBookId(bookDto.getBookId());
+        inventory.setPrice(bookDto.getPrice());
+        inventory.setQuantity(bookDto.getQuantity());
+
+        ResponseEntity<Inventory> responseEntity = restTemplate.postForEntity("http://INVENTORY-SERVICE/book-inventory/create",inventory,Inventory.class);
+        return this.bookEntityToDto(updatedBook);
     }
 
 
@@ -107,11 +129,7 @@ public class BookServiceImpl implements BookService {
 
 
         Inventory inventory = restTemplate.getForObject("http://INVENTORY-SERVICE/book-inventory/"+bookId, Inventory.class);
-//        List<Inventory> ratings = Arrays.stream(inventory).toList();
-
         logger.info("response status code: {} ",inventory);
-
-
         BookDto bookDto = this.bookEntityToDto(bookEntity);
         bookDto.setPrice(inventory.getPrice());
         bookDto.setQuantity(inventory.getQuantity());
@@ -131,7 +149,6 @@ public class BookServiceImpl implements BookService {
     private BookDto bookEntityToDto(BookEntity bookEntity){
 
         BookDto bookDto = this.modelMapper.map(bookEntity,BookDto.class);
-
         return bookDto;
     }
 }
