@@ -4,10 +4,10 @@
 Team Members / Developers
 ```
 
-Arif Akmal             - 30057 (Team_Lead)
+30057 - Arif Akmal(Team_Lead)
 
-Khalid Shifullah       - 30062
+30062 - Khalid Shifullah
 
-Mohammad Naimur Rahman - 30063
+30063 - Mohammad Naimur Rahman
 
-Mohammad Ahsanul Islam - 30073
+30073 - Mohammad Ahsanul Islam
