@@ -52,7 +52,7 @@ public class BookServiceImpl implements BookService {
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
 
-        ResponseEntity<Inventory> responseEntity = restTemplate.postForEntity("http://INVENTORYSERVICE/book-inventory/create",inventory,Inventory.class);
+        ResponseEntity<Inventory> responseEntity = restTemplate.postForEntity("http://INVENTORY-SERVICE/book-inventory/create",inventory,Inventory.class);
         if (responseEntity.getStatusCode()==HttpStatus.OK){
             return new ResponseEntity<>(savedBookEntity, HttpStatus.CREATED);
         }
@@ -106,7 +106,7 @@ public class BookServiceImpl implements BookService {
 
 
 
-        Inventory inventory = restTemplate.getForObject("http://INVENTORYSERVICE/book-inventory/"+bookId, Inventory.class);
+        Inventory inventory = restTemplate.getForObject("http://INVENTORY-SERVICE/book-inventory/"+bookId, Inventory.class);
 //        List<Inventory> ratings = Arrays.stream(inventory).toList();
 
         logger.info("response status code: {} ",inventory);
