@@ -13,10 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -37,7 +34,7 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private RestTemplate restTemplate;
 
-    private Inventory inventory = new Inventory();
+
 
     HttpHeaders headers = new HttpHeaders();
 
@@ -48,20 +45,24 @@ public class BookServiceImpl implements BookService {
     public BookDto create(BookDto bookDto) {
 
         BookEntity bookEntity = this.dtoToBookEntity(bookDto);
-
         BookEntity savedBookEntity = bookRepository.save(bookEntity);
-
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        inventory.setBookId(bookDto.getBookId());
-        inventory.setPrice(bookDto.getPrice());
-        inventory.setQuantity(bookDto.getQuantity());
-
-        ResponseEntity<Inventory> responseEntity = restTemplate.postForEntity("http://INVENTORY-SERVICE/book-inventory/create",inventory,Inventory.class);
+        saveDataInInventoryService(bookDto);
 
         return this.bookEntityToDto(savedBookEntity);
 
 
+    }
+
+    public Inventory saveDataInInventoryService(BookDto bookDto){
+
+        Inventory inventory = new Inventory();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        inventory.setBookId(bookDto.getBookId());
+        inventory.setPrice(bookDto.getPrice());
+        inventory.setQuantity(bookDto.getQuantity());
+        ResponseEntity<Inventory> responseEntity = restTemplate.postForEntity("http://INVENTORY-SERVICE/book-inventory/create",inventory,Inventory.class);
+
+        return inventory;
     }
 
     @Override
@@ -78,7 +79,6 @@ public class BookServiceImpl implements BookService {
             bookDto.setPrice(inventory.getPrice());
             bookDto.setQuantity(inventory.getQuantity());
         }
-
         return bookDtos;
 
     }
@@ -91,6 +91,13 @@ public class BookServiceImpl implements BookService {
         BookEntity bookEntity = bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "Id", bookId));
 
+        deleteFromInventory(bookId);
+
+        bookRepository.delete(bookEntity);
+
+    }
+
+    public void deleteFromInventory(Long bookId){
         ResponseEntity<Void> response = restTemplate.exchange(
                 "http://INVENTORY-SERVICE/book-inventory/delete/"+bookId,
                 HttpMethod.DELETE,
@@ -98,10 +105,6 @@ public class BookServiceImpl implements BookService {
                 Void.class,
                 bookId
         );
-
-
-        bookRepository.delete(bookEntity);
-
     }
 
     @Override
@@ -113,11 +116,18 @@ public class BookServiceImpl implements BookService {
         existingBook.setGenre(bookDto.getGenre());
 
         BookEntity updatedBook = bookRepository.save(existingBook);
+
+        updatePriceAndQuantityInInventoryService(bookId,bookDto);
+
+
+        return bookDto;
+    }
+
+    private void updatePriceAndQuantityInInventoryService(Long bookId,BookDto bookDto) {
         Inventory newInventoryModel = new Inventory(bookDto.getPrice(), bookDto.getQuantity(), bookDto.getBookId());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
 
         HttpEntity<Inventory> requestEntity = new HttpEntity<>(newInventoryModel, headers);
 
@@ -132,9 +142,6 @@ public class BookServiceImpl implements BookService {
                 requestEntity,
                 Inventory.class
         );
-
-
-        return bookDto;
     }
 
 
@@ -142,14 +149,20 @@ public class BookServiceImpl implements BookService {
     public BookDto getBookById(Long bookId) {
         BookEntity bookEntity = this.bookRepository.findById(bookId)
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "Id", bookId));
-        Inventory inventory = restTemplate.getForObject("http://INVENTORY-SERVICE/book-inventory/"+bookId, Inventory.class);
-        logger.info("response status code: {} ",inventory);
+
+        Inventory inventory = getBookDetailFromInventory(bookId);
+
         BookDto bookDto = this.bookEntityToDto(bookEntity);
         bookDto.setPrice(inventory.getPrice());
         bookDto.setQuantity(inventory.getQuantity());
-
-
         return bookDto;
+    }
+
+    private Inventory getBookDetailFromInventory(Long bookId) {
+        Inventory inventory = restTemplate.getForObject("http://INVENTORY-SERVICE/book-inventory/"+bookId, Inventory.class);
+        //logger.info("response status code: {} ",inventory);
+        return inventory;
+
     }
 
     @Override
@@ -169,27 +182,32 @@ public class BookServiceImpl implements BookService {
 
             System.out.println(newInventoryModel);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
+
+            setNewQuantityInInventoryService(newInventoryModel,bookId);
 
 
-            HttpEntity<Inventory> requestEntity = new HttpEntity<>(newInventoryModel, headers);
-
-            String url = "http://INVENTORY-SERVICE/book-inventory/update/{bookId}";
-
-            URI uri = UriComponentsBuilder.fromUriString(url)
-                    .buildAndExpand(bookId)
-                    .toUri();
-
-            ResponseEntity<Inventory> response = restTemplate.exchange(
-                    uri,
-                    HttpMethod.PUT,
-                    requestEntity,
-                    Inventory.class
-            );
         }
 
         return null;
+    }
+
+    private void setNewQuantityInInventoryService(Inventory newInventoryModel,  Long bookId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Inventory> requestEntity = new HttpEntity<>(newInventoryModel, headers);
+        String url = "http://INVENTORY-SERVICE/book-inventory/update/{bookId}";
+
+        URI uri = UriComponentsBuilder.fromUriString(url)
+                .buildAndExpand(bookId)
+                .toUri();
+
+        ResponseEntity<Inventory> response = restTemplate.exchange(
+                uri,
+                HttpMethod.PUT,
+                requestEntity,
+                Inventory.class
+        );
     }
 
 
