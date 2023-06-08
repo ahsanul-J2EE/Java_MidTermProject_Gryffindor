@@ -2,6 +2,7 @@ package com.onlinebookshop.BookService.controller;
 
 import com.onlinebookshop.BookService.model.ApiResponse;
 import com.onlinebookshop.BookService.model.BookDto;
+import com.onlinebookshop.BookService.model.BuyRequest;
 import com.onlinebookshop.BookService.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,10 +19,10 @@ public class BookController {
     private final BookService bookService;
 
     @PostMapping("/create")
-    public ResponseEntity<Object> create(@RequestBody BookDto bookDto) {
+    public BookDto create(@RequestBody BookDto bookDto) {
 
-        ResponseEntity<Object> newBookDto = bookService.create(bookDto);
-        return new ResponseEntity<>(newBookDto, HttpStatus.CREATED);
+//        ResponseEntity<Object> newBookDto = bookService.create(bookDto);
+        return bookService.create(bookDto);
     }
 
 
@@ -53,9 +54,9 @@ public class BookController {
     }
 
 
-
-
-
-
+    @PostMapping("/book/buy")
+    public String buyBook(@RequestBody BuyRequest buyRequest) {
+        return bookService.buyBook(buyRequest);
+    }
 
 }

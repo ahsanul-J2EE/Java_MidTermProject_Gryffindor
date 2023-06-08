@@ -9,10 +9,9 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
-public class Inventory {
+public class  BuyRequest {
 
-    private Double price;
-    private Long quantity;
     private Long bookId;
+    private Long quantity;
 
 }

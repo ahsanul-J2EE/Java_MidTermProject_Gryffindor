@@ -21,13 +21,7 @@ public class InventoryServiceImplementation implements InventoryService {
     private final InventoryRepository inventoryRepo;
     private final ModelMapper modelMapper;
 
-//    private InventoryModel ConvertEntityToModel(InventoryEntity inventoryEntity){
-//        return InventoryModel.builder()
-//                .price(inventoryEntity.getPrice())
-//                .quantity(inventoryEntity.getQuantity())
-//                .bookId(inventoryEntity.getBookId())
-//                .build();
-//    }
+
 
     @Override
     public ResponseEntity<InventoryModel> CreateNewInventory(InventoryEntity inventory) {
@@ -60,7 +54,7 @@ public class InventoryServiceImplementation implements InventoryService {
         InventoryEntity newInventory = inventoryRepo.findBybookId(bookId);
             newInventory.setPrice(inventory.getPrice());
             newInventory.setQuantity(inventory.getQuantity());
-            newInventory.setBookId(inventory.getBookId());
+//            newInventory.setBookId(inventory.getBookId());
             inventoryRepo.save(newInventory);
 
         InventoryModel inventoryModel = this.modelMapper.map( newInventory , InventoryModel.class);
