@@ -15,7 +15,7 @@ import java.util.List;
 public class BookDto {
 
 
-    private Integer bookId;
+    private Long bookId;
 
     private String bookName;
 

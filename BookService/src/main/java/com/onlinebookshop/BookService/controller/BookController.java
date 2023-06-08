@@ -2,6 +2,7 @@ package com.onlinebookshop.BookService.controller;
 
 import com.onlinebookshop.BookService.model.ApiResponse;
 import com.onlinebookshop.BookService.model.BookDto;
+import com.onlinebookshop.BookService.model.BuyRequest;
 import com.onlinebookshop.BookService.service.BookService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -53,9 +54,9 @@ public class BookController {
     }
 
 
-
-
-
-
+    @PostMapping("/book/buy")
+    public String buyBook(@RequestBody BuyRequest buyRequest) {
+        return bookService.buyBook(buyRequest);
+    }
 
 }

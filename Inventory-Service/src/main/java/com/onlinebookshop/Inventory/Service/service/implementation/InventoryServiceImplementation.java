@@ -21,13 +21,7 @@ public class InventoryServiceImplementation implements InventoryService {
     private final InventoryRepository inventoryRepo;
     private final ModelMapper modelMapper;
 
-//    private InventoryModel ConvertEntityToModel(InventoryEntity inventoryEntity){
-//        return InventoryModel.builder()
-//                .price(inventoryEntity.getPrice())
-//                .quantity(inventoryEntity.getQuantity())
-//                .bookId(inventoryEntity.getBookId())
-//                .build();
-//    }
+
 
     @Override
     public ResponseEntity<InventoryModel> CreateNewInventory(InventoryEntity inventory) {
