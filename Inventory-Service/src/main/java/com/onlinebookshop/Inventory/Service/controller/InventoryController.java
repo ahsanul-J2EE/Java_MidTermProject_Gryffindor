@@ -6,6 +6,7 @@ import com.onlinebookshop.Inventory.Service.service.InventoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.util.List;
 
@@ -22,9 +23,9 @@ public class InventoryController {
         return inventoryService.CreateNewInventory(inventory);
     }
 
-    @GetMapping("")
-    public ResponseEntity<List<InventoryModel>> ShowAllInventory(){
-        return inventoryService.ShowAllInventory();
+    @PostMapping("")
+    public ResponseEntity<List<InventoryModel>> ShowAllInventory(@RequestBody List<Long> bookIds ){
+        return inventoryService.ShowAllInventory( bookIds );
     }
 
 

@@ -9,7 +9,7 @@ import java.util.List;
 public interface InventoryService {
 
     ResponseEntity<InventoryModel> CreateNewInventory(InventoryEntity inventory);
-    ResponseEntity< List<InventoryModel> > ShowAllInventory();
+    ResponseEntity< List<InventoryModel> > ShowAllInventory( List<Long> bookIds );
     ResponseEntity<InventoryModel> ShowInventoryByBookId(Long bookId);
     ResponseEntity<InventoryModel> UpdateInventoryByBookId(Long bookId , InventoryEntity inventory);
     ResponseEntity<InventoryModel> DeleteInventoryByBookId(Long bookId);

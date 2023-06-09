@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,12 +33,13 @@ public class InventoryServiceImplementation implements InventoryService {
     }
 
     @Override
-    public ResponseEntity< List<InventoryModel> > ShowAllInventory() {
+    public ResponseEntity< List<InventoryModel> > ShowAllInventory( List<Long> bookIds ) {
 
-        List<InventoryModel> inventoryModels = inventoryRepo.findAll()
-                .stream()
-                .map( temp -> modelMapper.map( temp , InventoryModel.class) )
-                .collect(Collectors.toList());
+        List<InventoryModel> inventoryModels = new ArrayList<>();
+
+        for( Long bookId : bookIds )
+            inventoryModels.add( this.modelMapper.map( inventoryRepo.findBybookId(bookId) , InventoryModel.class) );
+
         return new ResponseEntity<>(inventoryModels , HttpStatus.OK);
     }
 
@@ -52,10 +54,9 @@ public class InventoryServiceImplementation implements InventoryService {
     @Override
     public ResponseEntity<InventoryModel> UpdateInventoryByBookId(Long bookId, InventoryEntity inventory) {
         InventoryEntity newInventory = inventoryRepo.findBybookId(bookId);
-            newInventory.setPrice(inventory.getPrice());
-            newInventory.setQuantity(inventory.getQuantity());
-//            newInventory.setBookId(inventory.getBookId());
-            inventoryRepo.save(newInventory);
+        newInventory.setPrice(inventory.getPrice());
+        newInventory.setQuantity(inventory.getQuantity());
+        inventoryRepo.save(newInventory);
 
         InventoryModel inventoryModel = this.modelMapper.map( newInventory , InventoryModel.class);
         return new ResponseEntity<>( inventoryModel , HttpStatus.OK );
@@ -68,6 +69,5 @@ public class InventoryServiceImplementation implements InventoryService {
 
         InventoryModel inventoryModel = this.modelMapper.map( newInventory , InventoryModel.class );
         return new ResponseEntity<>( inventoryModel , HttpStatus.OK );
-//        return new ResponseEntity<>( ConvertEntityToModel(newInventory) , HttpStatus.OK );
     }
 }
