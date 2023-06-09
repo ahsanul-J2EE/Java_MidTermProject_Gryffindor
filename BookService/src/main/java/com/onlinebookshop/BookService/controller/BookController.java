@@ -13,39 +13,36 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/book-service")
 @RequiredArgsConstructor
 public class BookController {
     private final BookService bookService;
 
     @PostMapping("/create")
-    public BookDto create(@RequestBody BookDto bookDto) {
+    public ResponseEntity<ApiResponse> create(@RequestBody BookDto bookDto) {
 
-//        ResponseEntity<Object> newBookDto = bookService.create(bookDto);
         return bookService.create(bookDto);
     }
 
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<BookDto> updateBookEntity(@PathVariable("id") Long bookId, @RequestBody BookDto bookDto) {
+    public ResponseEntity<ApiResponse> updateBookEntity(@PathVariable("id") Long bookId, @RequestBody BookDto bookDto) {
 
-        BookDto updatedBook =  bookService.updateBookEntity(bookId,bookDto);
-        return ResponseEntity.ok(updatedBook);
+        return bookService.updateBookEntity(bookId,bookDto);
+
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse> delete(@PathVariable("id") Long bookId) {
-//        return bookService.delete(bookId);
 
         this.bookService.delete(bookId);
 
-        return new ResponseEntity(new ApiResponse("User Deleted Successfully",true),HttpStatus.OK);
+        return new ResponseEntity(new ApiResponse("Book Details Deleted Successfully",null,true),HttpStatus.OK);
 
     }
 
     @GetMapping("/book/{id}")
-    public ResponseEntity<Object> getBookById(@PathVariable("id") Long bookId) {
-        return ResponseEntity.ok( bookService.getBookById(bookId));
+    public ResponseEntity<ApiResponse> getBookById(@PathVariable("id") Long bookId) {
+        return bookService.getBookById(bookId);
     }
 
     @GetMapping("/book/all")
@@ -55,7 +52,7 @@ public class BookController {
 
 
     @PostMapping("/book/buy")
-    public String buyBook(@RequestBody BuyRequest buyRequest) {
+    public ResponseEntity<ApiResponse> buyBook(@RequestBody BuyRequest buyRequest) {
         return bookService.buyBook(buyRequest);
     }
 

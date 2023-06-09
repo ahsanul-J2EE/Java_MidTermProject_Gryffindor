@@ -17,21 +17,8 @@ public class MyConfig {
     @LoadBalanced
     public RestTemplate restTemplate() {
 
-
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        List<ClientHttpRequestInterceptor> interceptors=new ArrayList<>();
-//
-//        restTemplate.setInterceptors(interceptors);
-//
-//
-//        return restTemplate;
-
         return new RestTemplate();
 
-
     }
-
-
 
 }

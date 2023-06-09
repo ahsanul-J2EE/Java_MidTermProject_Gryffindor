@@ -1,10 +1,8 @@
 package com.onlinebookshop.BookService.model;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 
 @Getter
 @Setter
@@ -13,6 +11,7 @@ import lombok.Setter;
 public class ApiResponse<T> {
 
     private String message;
+    private Object Data;
     private boolean  success;
 
 
