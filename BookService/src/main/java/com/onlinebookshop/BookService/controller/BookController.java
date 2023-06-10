@@ -46,8 +46,8 @@ public class BookController {
     }
 
     @GetMapping("/book/all")
-    public ResponseEntity<List<BookDto>> getBookById() {
-        return ResponseEntity.ok( bookService.getAllBooks());
+    public ResponseEntity<List<BookDto>> getAllBooks() {
+        return bookService.getAllBooks();
     }
 
 

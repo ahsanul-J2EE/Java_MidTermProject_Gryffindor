@@ -37,9 +37,9 @@ public class InventoryServiceImplementation implements InventoryService {
 
         List<InventoryModel> inventoryModels = new ArrayList<>();
 
-        for( Long bookId : bookIds )
-            inventoryModels.add( this.modelMapper.map( inventoryRepo.findBybookId(bookId) , InventoryModel.class) );
-
+        for( Long bookId : bookIds ) {
+            inventoryModels.add(this.modelMapper.map(inventoryRepo.findBybookId(bookId), InventoryModel.class));
+        }
         return new ResponseEntity<>(inventoryModels , HttpStatus.OK);
     }
 

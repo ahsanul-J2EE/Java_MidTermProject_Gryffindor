@@ -10,7 +10,7 @@ import java.util.List;
 public interface BookService {
 
     ResponseEntity<ApiResponse> create(BookDto bookDto);
-    List<BookDto> getAllBooks();
+    ResponseEntity<List<BookDto>> getAllBooks();
     void delete(Long bookId);
     ResponseEntity<ApiResponse> updateBookEntity(Long bookId, BookDto requestModel);
 

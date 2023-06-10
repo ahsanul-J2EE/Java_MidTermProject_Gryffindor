@@ -10,12 +10,14 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,22 +71,47 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public List<BookDto> getAllBooks() {
+    public ResponseEntity<List<BookDto>> getAllBooks() {
+        //Fetching all books from book-service
+        List<BookEntity> bookEntityList = bookRepository.findAll();
+        //Creating a list for storing the bookIDs from the bookEntityList
+        List<Long> bookIds = bookEntityList.stream().map(BookEntity::getBookId).collect(Collectors.toList());
 
-        List<BookEntity> bookEntities =  this.bookRepository.findAll();
-        List<BookDto> bookDtos = bookEntities.stream().map(book -> this.bookEntityToDto(book)).collect(Collectors.toList());
-//        for(BookDto bookDto : bookDtos) {
-//            System.out.println(bookDto.getBookId());
-//            Long bookId = bookDto.getBookId();
-//            Inventory inventory = restTemplate.getForObject("http://INVENTORY-SERVICE/book-inventory/45", Inventory.class);
-//            System.out.println(inventory.getPrice());
-//
-//            bookDto.setPrice(inventory.getPrice());
-//            bookDto.setQuantity(inventory.getQuantity());
-//        }
-        return bookDtos;
+        HttpEntity<List<Long>> requestEntity = new HttpEntity<>(bookIds);
+        ResponseEntity<List<Inventory>> inventoryResponseEntity = restTemplate.exchange(
+                baseUrl,
+                HttpMethod.POST,
+                requestEntity,
+                new ParameterizedTypeReference<>() {
+                }
+        );
+        if (inventoryResponseEntity.getStatusCode()==HttpStatus.OK){
+            //Creating a list for storing the response
+            List<Inventory> responseModel = inventoryResponseEntity.getBody();
+            List<BookDto> allBookInfo = new ArrayList<>();
 
+            for (int i=0; i<bookEntityList.size(); i++){
+                BookEntity bookEntity = bookEntityList.get(i);
+                assert responseModel != null;
+                Inventory model = responseModel.get(i);
+                BookDto bookModel = new BookDto();
+
+                bookModel.setBookId(bookEntity.getBookId());
+                bookModel.setBookName(bookEntity.getBookName());
+                bookModel.setAuthorName(bookEntity.getAuthorName());
+                bookModel.setGenre(bookEntity.getGenre());
+                bookModel.setPrice(model.getPrice());
+                bookModel.setQuantity(model.getQuantity());
+
+                allBookInfo.add(bookModel);
+            }
+            return new ResponseEntity<>(allBookInfo, HttpStatus.OK);
+        }
+        else{
+            throw new RuntimeException("Failed to retrieve book inventory details");
+        }
     }
+
 
     @Override
     public ResponseEntity<ApiResponse> getBookById(Long bookId) {
