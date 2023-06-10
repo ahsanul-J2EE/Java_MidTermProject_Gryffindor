@@ -25,7 +25,7 @@ public class InventoryServiceImplementation implements InventoryService {
 
 
     @Override
-    public ResponseEntity<InventoryModel> CreateNewInventory(InventoryEntity inventory) {
+    public ResponseEntity<InventoryModel> createNewInventory(InventoryEntity inventory) {
         InventoryEntity newInventory = inventoryRepo.save(inventory);
 
         InventoryModel inventoryModel = this.modelMapper.map( newInventory , InventoryModel.class);
@@ -33,7 +33,7 @@ public class InventoryServiceImplementation implements InventoryService {
     }
 
     @Override
-    public ResponseEntity< List<InventoryModel> > ShowAllInventory( List<Long> bookIds ) {
+    public ResponseEntity< List<InventoryModel> > showAllInventory(List<Long> bookIds ) {
 
         List<InventoryModel> inventoryModels = new ArrayList<>();
 
@@ -44,7 +44,7 @@ public class InventoryServiceImplementation implements InventoryService {
     }
 
     @Override
-    public ResponseEntity<InventoryModel> ShowInventoryByBookId(Long bookId) {
+    public ResponseEntity<InventoryModel> showInventoryByBookId(Long bookId) {
         InventoryEntity newInventory = inventoryRepo.findBybookId(bookId);
 
         InventoryModel inventoryModel = this.modelMapper.map( newInventory , InventoryModel.class);
@@ -52,7 +52,7 @@ public class InventoryServiceImplementation implements InventoryService {
     }
 
     @Override
-    public ResponseEntity<InventoryModel> UpdateInventoryByBookId(Long bookId, InventoryEntity inventory) {
+    public ResponseEntity<InventoryModel> updateInventoryByBookId(Long bookId, InventoryEntity inventory) {
         InventoryEntity newInventory = inventoryRepo.findBybookId(bookId);
         newInventory.setPrice(inventory.getPrice());
         newInventory.setQuantity(inventory.getQuantity());
@@ -63,7 +63,7 @@ public class InventoryServiceImplementation implements InventoryService {
     }
 
     @Override
-    public ResponseEntity<InventoryModel> DeleteInventoryByBookId(Long bookId) {
+    public ResponseEntity<InventoryModel> deleteInventoryByBookId(Long bookId) {
         InventoryEntity newInventory = inventoryRepo.findBybookId(bookId);
         inventoryRepo.delete(newInventory);
 

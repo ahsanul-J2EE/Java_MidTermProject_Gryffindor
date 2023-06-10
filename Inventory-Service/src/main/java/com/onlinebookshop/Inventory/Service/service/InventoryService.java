@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface InventoryService {
 
-    ResponseEntity<InventoryModel> CreateNewInventory(InventoryEntity inventory);
-    ResponseEntity< List<InventoryModel> > ShowAllInventory( List<Long> bookIds );
-    ResponseEntity<InventoryModel> ShowInventoryByBookId(Long bookId);
-    ResponseEntity<InventoryModel> UpdateInventoryByBookId(Long bookId , InventoryEntity inventory);
-    ResponseEntity<InventoryModel> DeleteInventoryByBookId(Long bookId);
+    ResponseEntity<InventoryModel> createNewInventory(InventoryEntity inventory);
+    ResponseEntity< List<InventoryModel> > showAllInventory(List<Long> bookIds );
+    ResponseEntity<InventoryModel> showInventoryByBookId(Long bookId);
+    ResponseEntity<InventoryModel> updateInventoryByBookId(Long bookId , InventoryEntity inventory);
+    ResponseEntity<InventoryModel> deleteInventoryByBookId(Long bookId);
 
 }
