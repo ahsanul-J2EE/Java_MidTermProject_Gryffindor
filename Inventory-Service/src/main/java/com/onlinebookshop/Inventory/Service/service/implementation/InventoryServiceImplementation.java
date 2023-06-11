@@ -9,10 +9,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,23 +20,20 @@ public class InventoryServiceImplementation implements InventoryService {
     private final InventoryRepository inventoryRepo;
     private final ModelMapper modelMapper;
 
-
-
     @Override
     public ResponseEntity<InventoryModel> createNewInventory(InventoryEntity inventory) {
-        InventoryEntity newInventory = inventoryRepo.save(inventory);
-
-        InventoryModel inventoryModel = this.modelMapper.map( newInventory , InventoryModel.class);
-        return new ResponseEntity<>( inventoryModel , HttpStatus.CREATED );
+        InventoryEntity savedInventoryEntity = inventoryRepo.save(inventory);
+        InventoryModel inventoryModel = this.modelMapper.map(savedInventoryEntity , InventoryModel.class);
+        return new ResponseEntity<>(inventoryModel , HttpStatus.CREATED );
     }
 
     @Override
-    public ResponseEntity< List<InventoryModel> > showAllInventory(List<Long> bookIds ) {
-
+    public ResponseEntity< List<InventoryModel>> showAllInventory(List<Long> bookIds ) {
         List<InventoryModel> inventoryModels = new ArrayList<>();
-
-        for( Long bookId : bookIds ) {
-            inventoryModels.add(this.modelMapper.map(inventoryRepo.findBybookId(bookId), InventoryModel.class));
+        for (Long bookId : bookIds ) {
+            inventoryModels.add(this.modelMapper.
+                    map(inventoryRepo.findBybookId(bookId), InventoryModel.class)
+            );
         }
         return new ResponseEntity<>(inventoryModels , HttpStatus.OK);
     }

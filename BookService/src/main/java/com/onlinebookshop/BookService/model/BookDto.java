@@ -13,19 +13,10 @@ import java.util.List;
 @Getter
 @Setter
 public class BookDto {
-
-
     private Long bookId;
-
     private String bookName;
-
     private String authorName;
-
     private String genre;
-
     private double price;
-
     private Long quantity;
-
-
 }

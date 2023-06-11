@@ -17,8 +17,6 @@ public class BookEntity {
 
     @Id
     private Long bookId;
-
-
     @Column(nullable = false, length = 100)
     private String bookName;
     private String authorName;
