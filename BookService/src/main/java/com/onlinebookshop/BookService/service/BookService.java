@@ -13,12 +13,6 @@ public interface BookService {
     ResponseEntity<List<BookDto>> getAllBooks();
     void delete(Long bookId);
     ResponseEntity<ApiResponse> updateBookEntity(Long bookId, BookDto requestModel);
-
     ResponseEntity<ApiResponse> getBookById(Long bookId);
-
     ResponseEntity<ApiResponse> buyBook(BuyRequest buyRequest);
-
-
-
-
 }

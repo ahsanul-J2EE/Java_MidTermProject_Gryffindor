@@ -33,12 +33,10 @@ public class InventoryController {
         return inventoryService.showInventoryByBookId(bookId);
     }
 
-
     @PutMapping("/update/{bookId}")
     public ResponseEntity<InventoryModel> updateInventoryByBookId(@PathVariable Long bookId , @RequestBody InventoryEntity inventory){
         return inventoryService.updateInventoryByBookId(bookId, inventory);
     }
-
 
     @DeleteMapping("/delete/{bookId}")
     public ResponseEntity<InventoryModel> deleteInventoryById(@PathVariable Long bookId){
